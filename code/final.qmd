@@ -93,3 +93,52 @@ ggplot(sst_clean, aes(x = month, y = mean_monthly_sst, group = year, color = yea
     legend.background = element_rect(fill = "white", color = "black")  # Boxed legend
   )
 ```
+
+
+# Problem 3. Data Anaylsis
+
+## a. Response Variable
+
+In this dataset, 1 means that a Swift Parrot occupied the nest box, and 0 means the nest box was not occupied by a Swift Parrot. This binary variable allows us to model presence/absence behavior in response to environmental predictors.
+
+## b. Purpose of Study
+
+Swift Parrots are the target conservation species, while Common Starlings and Tree Martins are competitor species that may also use the boxes. The study is primarily concerned with whether the nest boxes are helping Swift Parrots, rather than just providing habitat for more common or competitive species.
+
+## c. Difference in "seasons"
+
+The two "seasons" in the dataset are 2016 and 2019, representing two separate breeding seasons. They differ in both time and potentially environmental conditions, and comparing them allows researchers to see whether nest box use by Swift Parrots changes between years.
+
+d. Table of Models
+
+```{r model-table}
+# Create a data frame with model information
+model_table <- tribble(
+  ~Model, ~Season, ~Distance_to_forest_edge, ~Description,
+  "1 (Null)", "Not included", "Not included", "Baseline model with intercept only",
+  "2 (Saturated)", "Included", "Included", "Full model with both season and distance predictors",
+  "3", "Included", "Not included", "Model with season as only predictor",
+  "4", "Not included", "Included", "Model with distance as only predictor"
+)
+
+# Display table nicely
+knitr::kable(model_table, caption = "Table 1: Model structure for predicting Swift Parrot nest box occupancy")
+```
+
+e. Run the Models
+
+```{r setup-nestboxes, include=FALSE}
+library(tidyverse)
+library(glmmTMB)
+library(DHARMa)
+library(MuMIn)
+
+# Read and clean nest box data
+nest_boxes <- read_csv("data/occdist.csv") |>
+  filter(!is.na(sp)) |>
+  mutate(
+    occupied = sp,                                # Response variable (1 = occupied by Swift Parrot)
+    distance = as.numeric(`edge distance`),       # Clean up column name
+    season = as.factor(season)                    # Categorical predictor
+  )
+```
