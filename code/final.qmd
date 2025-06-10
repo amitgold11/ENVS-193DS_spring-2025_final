@@ -18,3 +18,28 @@ library(glmmTMB)
 library(DHARMa)
 library(MuMIn)
 ```
+
+# Problem 1. Research Writing
+
+## a. Transparent Statistical Methods
+
+In part 1, they used a correlation test to check if there’s a relationship between how far something is from the headwater and how much nitrogen ends up in the water each year.
+
+In part 2, they used a one-way ANOVA, which is a test that compares the average nitrogen load between different source types (like urban land, fertilizer, etc.).
+
+## b. More Information Needed
+
+One thing that’s missing is follow-up comparisons to figure out which specific sources actually differ from each other. Without that, it’s hard to tell where the differences are coming from.
+
+It would also help to include some summary stats—like the average and spread of nitrogen load for each source so we can better understand what’s going on beyond just the p-value.
+
+## c. Suggestions For Rewriting
+
+Nitrogen load in the San Joaquin River Delta appears to be related to how far the site is from the headwater. As distance increases, nitrogen load tends to increase (correlation test: r = correlation coefficient, p = 0.03, α = significance level).
+
+Nitrogen load varied depending on the source(such as urban land, atmospheric deposition, and fertilizer). A one-way ANOVA found significant differences between sources (ANOVA: F = test statistic, df = degrees of freedom, p = 0.02, α = significance level), but more information is needed, including post-hoc comparisons and group averages, to clarify which sources are actually different from each other.
+
+```{r}
+sst <- read_csv("data/SST_update2023.csv")
+```
+
