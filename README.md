@@ -12,4 +12,4 @@ The work demonstrates skills in statistical communication, data cleaning and wra
 - `data/occdist.csv`: Nest box occupancy data used in Problem 3
 
 ## Rendered Output
-[Link to final rendered HTML] (https://github.com/amitgold11/ENVS-193DS_spring-2025_final.git)
+[Link to final rendered HTML] (https://github.com/amitgold11/ENVS-193DS_spring-2025_final/blob/main/final.html)
