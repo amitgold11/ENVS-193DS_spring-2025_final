@@ -274,3 +274,15 @@ These trends could reflect ecological preferences like needing access to forest 
 # Problem 4. Affective and Exploratory Visualizations
 
 ## a. Comparing Visualizations
+
+**1. How are the visualizations different from each other in the way you have represented your data?**  
+My exploratory visualizations from Homework 2 were structured, scientific, and focused on comparing variables like nitrogen levels, ground cover, and biomass across treatments and years. In contrast, my affective visualization from Homework 3 used mood ratings to represent a personal experience (reading environments), and the design prioritized approachability and emotional connection rather than just showing scientific trends.
+
+**2. What similarities do you see between all your visualizations?**  
+Both sets of visualizations aimed to clearly communicate patterns and group differences. I consistently used color to distinguish between groups and included readable axis labels. I also tried to keep the formatting clean and easy to interpret.
+
+**3. What patterns do you see in each visualization? Are these different between visualizations? If so, why?**  
+In Homework 2, I saw differences in biomass over time and across treatments, and patterns in nitrogen data depending on site and method. In Homework 3, I noticed that my mood tended to be higher in quiet environments. The data patterns were different because the goals were different. Homework 2 focused on environmental effects in a field experiment, while Homework 3 reflected my personal experience and subjective ratings.
+
+**4. What feedback did you get, and how did you respond?**  
+One suggestion I got was to make sure my axis labels were clear and to adjust the sizing of text and legends for readability. I took that into account by increasing font size in Homework 3 and making sure each environment label on the x-axis was legible, even with longer category names.
