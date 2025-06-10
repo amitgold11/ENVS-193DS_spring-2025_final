@@ -39,7 +39,28 @@ Nitrogen load in the San Joaquin River Delta appears to be related to how far th
 
 Nitrogen load varied depending on the source(such as urban land, atmospheric deposition, and fertilizer). A one-way ANOVA found significant differences between sources (ANOVA: F = test statistic, df = degrees of freedom, p = 0.02, α = significance level), but more information is needed, including post-hoc comparisons and group averages, to clarify which sources are actually different from each other.
 
-```{r}
+# Problem 2. Data Visualization
+
+```{r read in data}
 sst <- read_csv("data/SST_update2023.csv")
 ```
 
+```{r sst-cleaning}
+# Clean and summarize the SST data
+sst_clean <- sst |> 
+  mutate(date = ymd(date)) |>                   # Convert to Date class
+  mutate(
+    year = year(date),                          # Extract year
+    month = month(date, label = TRUE, abbr = TRUE)  # Extract month (abbreviated)
+  ) |> 
+  filter(year >= 2018 & year <= 2023) |>        # Keep only 2018–2023
+  group_by(year, month) |> 
+  summarize(mean_monthly_sst = mean(temp, na.rm = TRUE)) |> 
+  ungroup()
+
+# Show 5 sample rows
+slice_sample(sst_clean, n = 5)
+
+# Show structure
+str(sst_clean)
+```
