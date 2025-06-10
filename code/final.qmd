@@ -1,0 +1,20 @@
+---
+title: "ENVS 193DS Final"
+author: "Amit Goldberg"
+date: "2025-06-09"
+format: html
+  toc: true
+  toc-depth: 5
+  number-sections: true
+  theme: flatly
+  code-fold: true
+---
+[View the GitHub repository] (https://github.com/amitgold11/ENVS-193DS_spring-2025_final.git)
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(lubridate)
+library(glmmTMB)
+library(DHARMa)
+library(MuMIn)
+```
