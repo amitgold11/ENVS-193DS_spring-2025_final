@@ -40,6 +40,7 @@ Nitrogen load in the San Joaquin River Delta appears to be related to how far th
 
 Nitrogen load varied depending on the source(such as urban land, atmospheric deposition, and fertilizer). A one-way ANOVA found significant differences between sources (ANOVA: F = test statistic, df = degrees of freedom, p = 0.02, α = significance level), but more information is needed, including post-hoc comparisons and group averages, to clarify which sources are actually different from each other.
 
+
 # Problem 2. Data Visualization
 
 ## a. Cleaning and Summarizing
@@ -109,7 +110,7 @@ Swift Parrots are the target conservation species, while Common Starlings and Tr
 
 The two "seasons" in the dataset are 2016 and 2019, representing two separate breeding seasons. They differ in both time and potentially environmental conditions, and comparing them allows researchers to see whether nest box use by Swift Parrots changes between years.
 
-d. Table of Models
+## d. Table of Models
 
 ```{r model-table}
 # Create a data frame with model information
@@ -125,7 +126,7 @@ model_table <- tribble(
 knitr::kable(model_table, caption = "Table 1: Model structure for predicting Swift Parrot nest box occupancy")
 ```
 
-e. Run the Models
+## e. Run the Models
 
 ```{r setup-nestboxes, include=FALSE}
 library(tidyverse)
@@ -142,3 +143,134 @@ nest_boxes <- read_csv("data/occdist.csv") |>
     season = as.factor(season)                    # Categorical predictor
   )
 ```
+
+```{r run-models, message=FALSE, warning=FALSE}
+# Model 1: Null model (intercept only)
+m1 <- glmmTMB(occupied ~ 1, data = nest_boxes, family = binomial)
+
+# Model 2: Saturated model (season + distance)
+m2 <- glmmTMB(occupied ~ season + distance, data = nest_boxes, family = binomial)
+
+# Model 3: Season only
+m3 <- glmmTMB(occupied ~ season, data = nest_boxes, family = binomial)
+
+# Model 4: Distance only
+m4 <- glmmTMB(occupied ~ distance, data = nest_boxes, family = binomial)
+```
+
+## f. Check The Diagnostics
+
+```{r model-diagnostics, message=FALSE, warning=FALSE}
+# Load DHARMa
+library(DHARMa)
+
+# Simulate and plot residuals for each model
+
+# Model 1
+res1 <- simulateResiduals(m1)
+plot(res1)
+
+# Model 2
+res2 <- simulateResiduals(m2)
+plot(res2)
+
+# Model 3
+res3 <- simulateResiduals(m3)
+plot(res3)
+
+# Model 4
+res4 <- simulateResiduals(m4)
+plot(res4)
+```
+
+## g. Select The Best Model
+
+```{r model-selection, message=FALSE, warning=FALSE}
+# Load MuMIn package
+library(MuMIn)
+
+# Compare AIC values for all models
+aic_table <- AIC(m1, m2, m3, m4)
+aic_table
+```
+The best model as determined by Akaike’s Information Criterion (AIC) included both season and distance from forest edge as predictors. This model explains variation in Swift Parrot nest box occupancy using both the year of observation and how far the nest box is from the forest edge.
+
+## h. Visualize The Model Predictions
+
+```{r model-plot, message=FALSE, warning=FALSE}
+# Create new data frame for predictions
+# Use a sequence of distances from 0 to max, for each season
+newdata <- expand.grid(
+  distance = seq(min(nest_boxes$distance), max(nest_boxes$distance), length.out = 100),
+  season = levels(nest_boxes$season)
+)
+
+# Add predicted values + 95% confidence intervals
+predictions <- predict(m2, newdata = newdata, type = "response", se.fit = TRUE)
+newdata$fit <- predictions$fit
+newdata$lower <- predictions$fit - 1.96 * predictions$se.fit
+newdata$upper <- predictions$fit + 1.96 * predictions$se.fit
+
+# Plot predictions + observed data
+ggplot() +
+  # Underlying data
+  geom_point(data = nest_boxes, aes(x = distance, y = occupied, color = season), alpha = 0.5, shape = 16) +
+
+  # Confidence ribbon
+  geom_ribbon(data = newdata, aes(x = distance, ymin = lower, ymax = upper, fill = season), alpha = 0.3) +
+
+  # Prediction line
+  geom_line(data = newdata, aes(x = distance, y = fit, color = season), size = 1.2) +
+
+  labs(
+    x = "Distance from forest edge (m)",
+    y = "Probability of Swift Parrot nest box occupancy",
+    color = "Season",
+    fill = "Season"
+  ) +
+  theme_minimal(base_size = 13) +
+  theme(
+    panel.grid = element_blank(),                         # Remove gridlines
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 0.8)
+  ) +
+  scale_color_brewer(palette = "Dark2") +                 # Custom colors
+  scale_fill_brewer(palette = "Dark2")
+```
+
+## i. Write a Caption
+
+Figure 1. Predicted Swift Parrot nest box occupancy by distance from forest edge and season.
+This figure shows the predicted probability of Swift Parrot nest box occupancy based on distance from the forest edge for the 2016 and 2019 breeding seasons. Lines represent model predictions from a logistic regression model, and shaded areas show 95% confidence intervals. Observed nest box occupancy (1 = occupied, 0 = not) is overlaid as semi-transparent points.
+Data source: Stojanovic et al. (2021), Dryad dataset https://doi.org/10.5061/dryad.83bk3j9sb
+
+## j. Calculate Model Predictions
+
+```{r model-predictions, message=FALSE, warning=FALSE}
+# New data for specific predictions
+pred_points <- expand.grid(
+  distance = c(0, 900),
+  season = levels(nest_boxes$season)
+)
+
+# Predict probability + standard error
+pred_results <- predict(m2, newdata = pred_points, type = "response", se.fit = TRUE)
+
+# Add predictions + 95% confidence intervals
+pred_points$fit <- pred_results$fit
+pred_points$lower <- pred_results$fit - 1.96 * pred_results$se.fit
+pred_points$upper <- pred_results$fit + 1.96 * pred_results$se.fit
+
+# Show the results
+pred_points
+```
+
+## k. Interpret Your Results
+
+At 0 meters from the forest edge, Swift Parrots had a predicted occupancy probability of about 48% in 2016 and 30% in 2019. At 900 meters, those probabilities dropped significantly to around 12% in 2016 and 6% in 2019.
+This suggests that Swift Parrots are more likely to occupy nest boxes placed closer to the forest edge, and that occupancy was generally higher in 2016 than in 2019.
+These trends could reflect ecological preferences like needing access to forest resources, and the lower occupancy in 2019 might be due to changes in habitat quality, population size, or increased competition from other species.
+
+
+# Problem 4. Affective and Exploratory Visualizations
+
+## a. Comparing Visualizations
