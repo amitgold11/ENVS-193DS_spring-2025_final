@@ -9,7 +9,8 @@ format: html
   theme: flatly
   code-fold: true
 ---
-[View the GitHub repository] (https://github.com/amitgold11/ENVS-193DS_spring-2025_final.git)
+
+\[View the GitHub repository\] (https://github.com/amitgold11/ENVS-193DS_spring-2025_final.git)
 
 ```{r setup, include=FALSE}
 library(tidyverse)
@@ -41,26 +42,54 @@ Nitrogen load varied depending on the source(such as urban land, atmospheric dep
 
 # Problem 2. Data Visualization
 
+## a. Cleaning and Summarizing
+
 ```{r read in data}
 sst <- read_csv("data/SST_update2023.csv")
 ```
 
 ```{r sst-cleaning}
 # Clean and summarize the SST data
-sst_clean <- sst |> 
-  mutate(date = ymd(date)) |>                   # Convert to Date class
+sst_clean <- sst |>
+  mutate(date = ymd(date)) |>                          # Convert date column to Date class
   mutate(
-    year = year(date),                          # Extract year
-    month = month(date, label = TRUE, abbr = TRUE)  # Extract month (abbreviated)
-  ) |> 
-  filter(year >= 2018 & year <= 2023) |>        # Keep only 2018–2023
-  group_by(year, month) |> 
-  summarize(mean_monthly_sst = mean(temp, na.rm = TRUE)) |> 
-  ungroup()
+    year = year(date),                                 # Extract year from date
+    month = month(date, label = TRUE, abbr = TRUE)     # Extract month as an ordered factor
+  ) |>
+  filter(year >= 2018 & year <= 2023) |>               # Keep only years 2018 through 2023
+  group_by(year, month) |>                             # Group by year and month
+  summarize(mean_monthly_sst = mean(temp, na.rm = TRUE)) |>  # Calculate mean temp per group
+  ungroup()                                            # Remove grouping
 
-# Show 5 sample rows
+# Display a random sample of 5 rows
 slice_sample(sst_clean, n = 5)
 
-# Show structure
+# Display structure of cleaned data
 str(sst_clean)
+```
+
+## b. Visualize The Data
+
+```{r sst-plot}
+# Convert year to factor so colors work correctly
+sst_clean <- sst_clean |>
+  mutate(year = as.factor(year))
+
+# Create the plot
+ggplot(sst_clean, aes(x = month, y = mean_monthly_sst, group = year, color = year)) +
+  geom_line(linewidth = 1) +                             # Use linewidth for lines
+  geom_point(size = 2) +                                 # Add points for each value
+  scale_color_viridis_d(begin = 0.1, end = 0.9, option = "C") +  # Light → dark color gradient
+  labs(
+    x = "Month",
+    y = "Mean monthly sea surface temperature (°C)",
+    color = "Year"
+  ) +
+  theme_minimal(base_size = 13) +                        # Clean theme
+  theme(
+    panel.border = element_rect(color = "black", fill = NA, linewidth = 0.8),   # Border around panel
+    panel.grid = element_blank(),                        # Remove all gridlines
+    legend.position = c(0.1, 0.8),                        # Legend inside top-left corner
+    legend.background = element_rect(fill = "white", color = "black")  # Boxed legend
+  )
 ```
