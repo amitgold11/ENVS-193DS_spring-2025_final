@@ -1,13 +1,14 @@
 ---
-title: "ENVS 193DS Final"
-author: "Amit Goldberg"
-date: "2025-06-09"
-format: html
-  toc: true
-  toc-depth: 5
-  number-sections: true
-  theme: flatly
-  code-fold: true
+title: "Final"
+editor: source
+published-title: "Due date"
+date: 2025-06-11
+format:
+  html:
+    message: false
+    warning: false
+    toc: true
+    toc-depth: 5
 ---
 
 \[View the GitHub repository\] (https://github.com/amitgold11/ENVS-193DS_spring-2025_final.git)
@@ -46,7 +47,7 @@ Nitrogen load varied depending on the source(such as urban land, atmospheric dep
 ## a. Cleaning and Summarizing
 
 ```{r read in data}
-sst <- read_csv("data/SST_update2023.csv")
+sst <- read_csv("../data/SST_update2023.csv")
 ```
 
 ```{r sst-cleaning}
@@ -135,7 +136,7 @@ library(DHARMa)
 library(MuMIn)
 
 # Read and clean nest box data
-nest_boxes <- read_csv("data/occdist.csv") |>
+nest_boxes <- read_csv("../data/occdist.csv") |>
   filter(!is.na(sp)) |>
   mutate(
     occupied = sp,                                # Response variable (1 = occupied by Swift Parrot)
@@ -286,3 +287,7 @@ In Homework 2, I saw differences in biomass over time and across treatments, and
 
 **4. What feedback did you get, and how did you respond?**  
 One suggestion I got was to make sure my axis labels were clear and to adjust the sizing of text and legends for readability. I took that into account by increasing font size in Homework 3 and making sure each environment label on the x-axis was legible, even with longer category names.
+
+## b. Sharing Your Affective Visualization
+
+In-class portion.
